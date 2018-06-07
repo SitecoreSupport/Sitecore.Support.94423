@@ -1,20 +1,31 @@
-﻿namespace Sitecore.Shell.Applications.Dialogs.DateTimeSelectors
+﻿namespace Sitecore.Support.Shell.Applications.Dialogs.DateTimeSelectors
 {
   using Sitecore;
+  using Sitecore.Web;
   using Sitecore.Web.UI.HtmlControls;
   using Sitecore.Web.UI.Pages;
   using Sitecore.Web.UI.Sheer;
   using System;
   using System.Runtime.CompilerServices;
 
-  public class DateTimeSelector : DialogForm
+  internal class DateTimeSelector : DialogForm
   {
     protected override void OnLoad(EventArgs e)
     {
       base.OnLoad(e);
       if (!Context.ClientPage.IsEvent)
       {
-        this.Date.Value = DateUtil.IsoDateToServerTimeIsoDate(DateUtil.IsoNow);
+        string rawUrl = Context.RawUrl;
+        string queryString = WebUtil.GetQueryString("value");
+        //The fix: use the selected date instead of the current one
+        if (!string.IsNullOrEmpty(queryString))
+        {
+          this.Date.Value = DateUtil.IsoDateToServerTimeIsoDate(queryString);
+        }
+        else
+        {
+          this.Date.Value = DateUtil.IsoDateToServerTimeIsoDate(DateUtil.IsoNow);
+        }
       }
     }
 
